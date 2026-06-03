@@ -1,0 +1,21 @@
+package internal
+
+import (
+	"encoding/json"
+	"net/http"
+
+	"fraud-alert-monitor/database"
+)
+
+func GetStatsHandler(w http.ResponseWriter, r *http.Request) {
+
+	stats, err := database.GetStats(database.DB)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(stats)
+}

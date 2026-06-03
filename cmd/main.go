@@ -22,6 +22,8 @@ func main() {
 	defer db.Close()
 
 	http.HandleFunc("/health", internal.HealthHandler)
+	http.HandleFunc("/alerts", internal.GetAlertsHandler)
+	http.HandleFunc("/stats", internal.GetStatsHandler)
 
 	http.HandleFunc("/calls", func(w http.ResponseWriter, r *http.Request) {
 
