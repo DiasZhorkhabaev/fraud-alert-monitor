@@ -28,17 +28,17 @@ func main() {
 
 	http.HandleFunc("/health", internal.HealthHandler)
 	http.HandleFunc("/alerts", app.GetAlertsHandler)
-	http.HandleFunc("/stats", internal.GetStatsHandler)
+	http.HandleFunc("/stats", app.GetStatsHandler)
 
 	http.HandleFunc("/calls", func(w http.ResponseWriter, r *http.Request) {
 
 		if r.Method == http.MethodPost {
-			internal.CreateCallHandler(w, r)
+			app.CreateCallHandler(w, r)
 			return
 		}
 
 		if r.Method == http.MethodGet {
-			internal.GetCallsHandler(w, r)
+			app.GetCallsHandler(w, r)
 			return
 		}
 
