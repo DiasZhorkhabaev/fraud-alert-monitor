@@ -12,9 +12,14 @@ func main() {
 	fmt.Println("Fraud Alert Monitor started")
 
 	db, err := database.Connect()
+
 	if err != nil {
 		fmt.Println("Database connection error:", err)
 		return
+	}
+
+	app := &internal.App{
+		DB: db,
 	}
 
 	fmt.Println("Server started on :8080")
@@ -22,7 +27,7 @@ func main() {
 	defer db.Close()
 
 	http.HandleFunc("/health", internal.HealthHandler)
-	http.HandleFunc("/alerts", internal.GetAlertsHandler)
+	http.HandleFunc("/alerts", app.GetAlertsHandler)
 	http.HandleFunc("/stats", internal.GetStatsHandler)
 
 	http.HandleFunc("/calls", func(w http.ResponseWriter, r *http.Request) {
