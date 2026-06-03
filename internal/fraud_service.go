@@ -1,26 +1,43 @@
 package internal
 
-import "fraud-alert-monitor/database"
+import (
+	"database/sql"
+	"log"
 
-func CheckFraud(call Call) {
+	"fraud-alert-monitor/database"
+)
+
+func CheckFraud(db *sql.DB, call Call) {
 
 	if call.Duration < 10 {
 
 		database.InsertAlert(
-			database.DB,
+			db,
 			call.PhoneFrom,
 			"Short call duration",
 			"MEDIUM",
+		)
+
+		log.Printf(
+			"Fraud alert generated: phone=%s reason=%s",
+			call.PhoneFrom,
+			"Short call duration",
 		)
 	}
 
 	if call.Status == "FAILED" {
 
 		database.InsertAlert(
-			database.DB,
+			db,
 			call.PhoneFrom,
 			"Failed call",
 			"LOW",
+		)
+
+		log.Printf(
+			"Fraud alert generated: phone=%s reason=%s",
+			call.PhoneFrom,
+			"Short call duration",
 		)
 	}
 }

@@ -7,15 +7,26 @@ import (
 	"fraud-alert-monitor/database"
 )
 
-func GetAlertsHandler(w http.ResponseWriter, r *http.Request) {
+func (app *App) GetAlertsHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 
-	alerts, err := database.GetAlerts(database.DB)
+	alerts, err := database.GetAlerts(app.DB)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
 	json.NewEncoder(w).Encode(alerts)
 }

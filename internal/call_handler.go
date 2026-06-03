@@ -2,23 +2,32 @@ package internal
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"fraud-alert-monitor/database"
 )
 
-func CreateCallHandler(w http.ResponseWriter, r *http.Request) {
+func (app *App) CreateCallHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
 	var call Call
 
 	err := json.NewDecoder(r.Body).Decode(&call)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusBadRequest,
+		)
 		return
 	}
 
 	err = database.InsertCall(
-		database.DB,
+		app.DB,
 		call.PhoneFrom,
 		call.PhoneTo,
 		call.Country,
@@ -26,13 +35,30 @@ func CreateCallHandler(w http.ResponseWriter, r *http.Request) {
 		call.Status,
 	)
 
-	CheckFraud(call)
-
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	log.Printf(
+		"Call created: from=%s to=%s country=%s duration=%d status=%s",
+		call.PhoneFrom,
+		call.PhoneTo,
+		call.Country,
+		call.Duration,
+		call.Status,
+	)
+
+	CheckFraud(app.DB, call)
+
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
 	json.NewEncoder(w).Encode(call)
 }

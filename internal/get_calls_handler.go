@@ -7,15 +7,26 @@ import (
 	"fraud-alert-monitor/database"
 )
 
-func GetCallsHandler(w http.ResponseWriter, r *http.Request) {
+func (app *App) GetCallsHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 
-	calls, err := database.GetCalls(database.DB)
+	calls, err := database.GetCalls(app.DB)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
 	json.NewEncoder(w).Encode(calls)
 }
